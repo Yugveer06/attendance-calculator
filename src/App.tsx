@@ -1,4 +1,4 @@
-import AttendanceCalculator from "./components/AttendanceCalculator";
+import AttendanceCalculator from "./Pages/AttendanceCalculator";
 import { ThemeProvider } from "./components/theme-provider";
 import { BackgroundBeams } from "./components/ui/background-beams";
 

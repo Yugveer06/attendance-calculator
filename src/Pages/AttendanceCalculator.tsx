@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { ModeToggle } from "./mode-toggle";
+import { ModeToggle } from "../components/mode-toggle";
 import { DateRange } from "react-day-picker";
-import { Calendar } from "./ui/calendar";
+import { Calendar } from "../components/ui/calendar";
 import { holidays } from "../../constants";
 
 import { AnimatePresence, motion as m } from "framer-motion";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Info } from "lucide-react";
 
 const AttendanceCalculator = () => {
 	const [date, setDate] = useState<DateRange | undefined>();
@@ -74,6 +75,7 @@ const AttendanceCalculator = () => {
 								Number of working days:{" "}
 								{countWorkingDays(date.from, date.to)}
 							</h2>
+							<Info size={20} />
 						</m.div>
 					)}
 				</AnimatePresence>
