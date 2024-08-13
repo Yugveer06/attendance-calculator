@@ -90,7 +90,8 @@ const AttendanceCalculator = () => {
 						max={countWorkingDays(date?.from, date?.to)}
 						id='numberOfDaysAttended'
 						placeholder='(in number)'
-						value={numberOfDaysAttended}
+						onFocus={e => e.target.select()}
+						value={numberOfDaysAttended.toString()}
 						onChange={e =>
 							setNumberOfDaysAttended(Number(e.target.value))
 						}
