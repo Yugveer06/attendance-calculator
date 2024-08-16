@@ -7,7 +7,6 @@ import { holidays } from "../../constants";
 import { AnimatePresence, motion as m } from "framer-motion";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { Info } from "lucide-react";
 
 const AttendanceCalculator = () => {
 	const [date, setDate] = useState<DateRange | undefined>();
