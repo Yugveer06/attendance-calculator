@@ -1,21 +1,106 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ModeToggle } from "../components/mode-toggle";
 import { DateRange } from "react-day-picker";
 import { Calendar } from "../components/ui/calendar";
-import { holidays } from "../../constants";
 
 import { AnimatePresence, motion as m } from "framer-motion";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+interface Holiday {
+	name: string;
+	dates: string[];
+	description: string;
+}
+
+const fetchHolidays = async (
+	startDate: Date,
+	endDate: Date
+): Promise<Holiday[]> => {
+	const apiKey = import.meta.env.VITE_CALENDARIFIC_API_KEY as string;
+	const startYear = startDate.getFullYear();
+	const endYear = endDate.getFullYear();
+	let holidays: Holiday[] = [];
+
+	// Check local storage
+	const cachedHolidays = localStorage.getItem("holidays");
+	let cachedData: { [year: string]: Holiday[] } = {};
+
+	if (cachedHolidays) {
+		cachedData = JSON.parse(cachedHolidays);
+	}
+
+	// Check if all required years are in cache
+	const missingYears = [];
+	for (let year = startYear; year <= endYear; year++) {
+		if (!cachedData[year]) {
+			missingYears.push(year);
+		} else {
+			holidays = holidays.concat(cachedData[year]);
+		}
+	}
+
+	// Fetch missing years from API
+	for (const year of missingYears) {
+		const url = `https://calendarific.com/api/v2/holidays?&api_key=${apiKey}&country=IN&year=${year}`;
+
+		try {
+			const response = await fetch(url);
+			if (response.ok) {
+				const data = await response.json();
+				const fetchedHolidays = data.response.holidays as Array<{
+					date: { iso: string };
+					name: string;
+					description: string;
+				}>;
+
+				const yearHolidays: Holiday[] = fetchedHolidays.map(
+					holiday => ({
+						name: holiday.name,
+						dates: [holiday.date.iso],
+						description: holiday.description,
+					})
+				);
+
+				// Add fetched holidays to the result and cache them
+				holidays = holidays.concat(yearHolidays);
+				cachedData[year] = yearHolidays;
+			} else {
+				throw new Error("Failed to fetch holidays");
+			}
+		} catch (error) {
+			console.error("Error fetching holidays:", error);
+		}
+	}
+
+	// Update local storage with new data
+	localStorage.setItem("holidays", JSON.stringify(cachedData));
+
+	// Filter holidays within the date range
+	const filteredHolidays = holidays.filter(holiday =>
+		holiday.dates.some(date => {
+			const holidayDate = new Date(date);
+			return holidayDate >= startDate && holidayDate <= endDate;
+		})
+	);
+
+	return filteredHolidays;
+};
 
 const AttendanceCalculator = () => {
 	const [date, setDate] = useState<DateRange | undefined>();
 	const [numberOfDaysAttended, setNumberOfDaysAttended] = useState(0);
+	const [holidays, setHolidays] = useState<Holiday[]>([]);
 
-	type Holiday = {
-		name: string;
-		dates: string[];
-	};
+	useEffect(() => {
+		if (date?.from && date?.to) {
+			const fetchData = async () => {
+				const holidaysData = await fetchHolidays(date.from!, date.to!);
+				setHolidays(holidaysData);
+			};
+
+			fetchData();
+		}
+	}, [date]);
 
 	function isHoliday(date: string, holidays: Holiday[]): boolean {
 		return holidays.some(holiday => holiday.dates.includes(date));
@@ -55,8 +140,6 @@ const AttendanceCalculator = () => {
 
 		return { workingDays, holidayList };
 	}
-
-	console.log(getWorkingDays(date?.from, date?.to).holidayList);
 
 	return (
 		<div className='z-50 bg-slate-100 border-slate-200 dark:border-slate-800 border-2 dark:bg-slate-900 rounded-xl backdrop-blur-[1px]  text-slate-950 dark:text-slate-200 p-4 m-4'>
