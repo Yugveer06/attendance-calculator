@@ -1,22 +1,21 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { ModeToggle } from "../components/mode-toggle";
 import { DateRange } from "react-day-picker";
-import { Calendar } from "../components/ui/calendar";
 
 import { AnimatePresence, motion as m } from "framer-motion";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-interface Holiday {
-	name: string;
-	dates: string[];
-	description: string;
-}
+
+import { ModeToggle } from "components/mode-toggle";
+import { Calendar } from "components/ui/calendar";
+import { Label } from "components/ui/label";
+import { Input } from "components/ui/input";
+
+import { Holiday } from "typings";
 
 const fetchHolidays = async (
 	startDate: Date,
 	endDate: Date
 ): Promise<Holiday[]> => {
-	const apiKey = import.meta.env.VITE_CALENDARIFIC_API_KEY as string;
 	const startYear = startDate.getFullYear();
 	const endYear = endDate.getFullYear();
 	let holidays: Holiday[] = [];
@@ -30,7 +29,7 @@ const fetchHolidays = async (
 	}
 
 	// Check if all required years are in cache
-	const missingYears = [];
+	const missingYears: number[] = [];
 	for (let year = startYear; year <= endYear; year++) {
 		if (!cachedData[year]) {
 			missingYears.push(year);
@@ -41,29 +40,16 @@ const fetchHolidays = async (
 
 	// Fetch missing years from API
 	for (const year of missingYears) {
-		const url = `https://calendarific.com/api/v2/holidays?&api_key=${apiKey}&country=IN&year=${year}`;
+		const response = await fetch(
+			`/api/holidays?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`
+		);
 
 		try {
-			const response = await fetch(url);
 			if (response.ok) {
-				const data = await response.json();
-				const fetchedHolidays = data.response.holidays as Array<{
-					date: { iso: string };
-					name: string;
-					description: string;
-				}>;
-
-				const yearHolidays: Holiday[] = fetchedHolidays.map(
-					holiday => ({
-						name: holiday.name,
-						dates: [holiday.date.iso],
-						description: holiday.description,
-					})
-				);
-
+				const fetchedHolidays = await response.json();
 				// Add fetched holidays to the result and cache them
-				holidays = holidays.concat(yearHolidays);
-				cachedData[year] = yearHolidays;
+				holidays = holidays.concat(fetchedHolidays);
+				cachedData[year] = fetchedHolidays;
 			} else {
 				throw new Error("Failed to fetch holidays");
 			}

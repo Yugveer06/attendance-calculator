@@ -1,4 +1,6 @@
 .env
+.env.local
+.next/
 
 # Logs
 logs

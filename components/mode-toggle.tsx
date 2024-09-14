@@ -1,14 +1,15 @@
 "use client";
 
 import { Moon, Sun, Check } from "lucide-react";
-import { useTheme } from "@/components/theme-provider";
-import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
+
+import { useTheme } from "next-themes";
 
 export function ModeToggle() {
 	const { theme, setTheme } = useTheme();
