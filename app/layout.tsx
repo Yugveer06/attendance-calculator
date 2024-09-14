@@ -6,8 +6,9 @@ import { ThemeProvider } from "components/theme-provider";
 const jetbrains_mono = JetBrains_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	title: "Dropbox",
-	description: "Dropbox clone",
+	title: "Attendance Calculator",
+	description:
+		"This is an attendance calculator app which helps you calculate the number of days you attended a course.",
 };
 
 export default function RootLayout({
