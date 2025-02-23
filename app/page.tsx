@@ -3,14 +3,19 @@
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 
-import { AnimatePresence, motion as m } from "framer-motion";
+import { Info } from "lucide-react";
 
 import { ModeToggle } from "components/mode-toggle";
 import { Calendar } from "components/ui/calendar";
 import { Label } from "components/ui/label";
 import { Input } from "components/ui/input";
+import { Button } from "components/ui/button";
+import DateRangeInfoModal from "components/DateRangeInfoModal";
+
+import { AnimatePresence, motion as m } from "motion/react";
 
 import { Holiday } from "typings";
+import { useAppStore } from "store";
 
 const fetchHolidays = async (
 	startDate: Date,
@@ -76,6 +81,13 @@ const AttendanceCalculator = () => {
 	const [date, setDate] = useState<DateRange | undefined>();
 	const [numberOfDaysAttended, setNumberOfDaysAttended] = useState(0);
 	const [holidays, setHolidays] = useState<Holiday[]>([]);
+
+	const [isDateRangeInfoModalOpen, setIsDateRangeInfoModalOpen] = useAppStore(
+		state => [
+			state.isDateRangeInfoModalOpen,
+			state.setIsDateRangeInfoModalOpen,
+		]
+	);
 
 	useEffect(() => {
 		if (date?.from && date?.to) {
@@ -171,6 +183,15 @@ const AttendanceCalculator = () => {
 								Number of working days:{" "}
 								{getWorkingDays(date.from, date.to).workingDays}
 							</h2>
+							<Button
+								className='p-2'
+								variant='ghost'
+								onClick={() =>
+									setIsDateRangeInfoModalOpen(true)
+								}
+							>
+								<Info size={20} />
+							</Button>
 						</m.div>
 					)}
 				</AnimatePresence>
@@ -220,6 +241,11 @@ const AttendanceCalculator = () => {
 					)}
 				</AnimatePresence>
 			</main>
+			<DateRangeInfoModal
+				date={date}
+				holidays={getWorkingDays(date?.from, date?.to).holidayList}
+				workingDays={getWorkingDays(date?.from, date?.to).workingDays}
+			/>
 		</div>
 	);
 };
