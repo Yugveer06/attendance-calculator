@@ -56,79 +56,79 @@ function DateRangeInfoModal({
 					<DialogTitle className='text-2xl'>
 						Date Range Details
 					</DialogTitle>
-					<DialogDescription className='space-y-6 pt-4'>
-						{date?.from && date?.to && (
-							<div className='text-base font-medium'>
-								Selected Period:{" "}
-								{format(date.from, "dd MMM yyyy")} to{" "}
-								{format(date.to, "dd MMM yyyy")}
-							</div>
-						)}
-
-						{holidays.length > 0 && (
-							<div>
-								<h3 className='font-semibold mb-3'>
-									Holidays in Selected Range:
-								</h3>
-								<div className='space-y-2'>
-									{holidays.map((holiday, index) => (
-										<div
-											key={index}
-											className='flex justify-between items-center bg-muted p-2 rounded-md'
-										>
-											<span>{holiday.name}</span>
-											<span className='text-sm text-muted-foreground'>
-												{holiday.dates
-													.map(date =>
-														format(
-															new Date(date),
-															"dd MMM yyyy"
-														)
-													)
-													.join(", ")}
-											</span>
-										</div>
-									))}
-								</div>
-							</div>
-						)}
-
-						<Separator />
-
-						<div className='space-y-3'>
-							<h3 className='font-semibold'>
-								Calculations Breakdown:
-							</h3>
-							<div className='space-y-2 text-sm'>
-								<div className='flex justify-between'>
-									<span>Total Days in Range:</span>
-									<span>{totalDays} days</span>
-								</div>
-								<div className='flex justify-between'>
-									<span>Sundays:</span>
-									<span>{totalSundays} days</span>
-								</div>
-								<div className='flex justify-between'>
-									<span>Holidays (excluding Sundays):</span>
-									<span>{totalHolidays} days</span>
-								</div>
-								<div className='flex justify-between'>
-									<span>Working Days:</span>
-									<span>{workingDays} days</span>
-								</div>
-								<div className='flex justify-between font-medium pt-2'>
-									<span>Non-working Days:</span>
-									<span>{totalDays - workingDays} days</span>
-								</div>
-							</div>
-						</div>
-
-						<div className='text-sm text-muted-foreground bg-muted p-3 rounded-md'>
-							Note: Holidays that fall on Sundays are counted only
-							once as non-working days.
-						</div>
-					</DialogDescription>
 				</DialogHeader>
+
+				<div className='space-y-6 pt-4'>
+					{date?.from && date?.to && (
+						<p className='text-base font-medium'>
+							Selected Period: {format(date.from, "dd MMM yyyy")}{" "}
+							to {format(date.to, "dd MMM yyyy")}
+						</p>
+					)}
+
+					{holidays.length > 0 && (
+						<div>
+							<h3 className='font-semibold mb-3'>
+								Holidays in Selected Range:
+							</h3>
+							<div className='space-y-2'>
+								{holidays.map((holiday, index) => (
+									<div
+										key={index}
+										className='flex justify-between items-center bg-muted p-2 rounded-md'
+									>
+										<span>{holiday.name}</span>
+										<span className='text-sm text-muted-foreground'>
+											{holiday.dates
+												.map(date =>
+													format(
+														new Date(date),
+														"dd MMM yyyy"
+													)
+												)
+												.join(", ")}
+										</span>
+									</div>
+								))}
+							</div>
+						</div>
+					)}
+
+					<Separator />
+
+					<div className='space-y-3'>
+						<h3 className='font-semibold'>
+							Calculations Breakdown:
+						</h3>
+						<div className='space-y-2 text-sm'>
+							<div className='flex justify-between'>
+								<span>Total Days in Range:</span>
+								<span>{totalDays} days</span>
+							</div>
+							<div className='flex justify-between'>
+								<span>Sundays:</span>
+								<span>{totalSundays} days</span>
+							</div>
+							<div className='flex justify-between'>
+								<span>Holidays (excluding Sundays):</span>
+								<span>{totalHolidays} days</span>
+							</div>
+							<div className='flex justify-between'>
+								<span>Working Days:</span>
+								<span>{workingDays} days</span>
+							</div>
+							<div className='flex justify-between font-medium pt-2'>
+								<span>Non-working Days:</span>
+								<span>{totalDays - workingDays} days</span>
+							</div>
+						</div>
+					</div>
+
+					<p className='text-sm text-muted-foreground bg-muted p-3 rounded-md'>
+						Note: Holidays that fall on Sundays are counted only
+						once as non-working days.
+					</p>
+				</div>
 			</DialogContent>
 		</Dialog>
 	);
